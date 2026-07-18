@@ -97,14 +97,17 @@ class ViesClientTest {
     }
 
     // Geçici hata retry tetiklemeli.
-    @Test
     void shouldMapMemberStateUnavailableFaultToTemporaryError() throws Exception {
-        mockServer.expect(payload(anyCheckVat()))
-                .andRespond(withServerOrReceiverFault("MS_UNAVAILABLE", Locale.ENGLISH));
+        for (int i = 0; i < 3; i++) {
+            mockServer.expect(payload(anyCheckVat()))
+                    .andRespond(withServerOrReceiverFault("MS_UNAVAILABLE", Locale.ENGLISH));
+        }
 
         assertThatThrownBy(() -> viesClient.checkVat("DE", "129273398"))
                 .isInstanceOf(ViesTemporaryException.class)
                 .hasMessageContaining("MS_UNAVAILABLE");
+        
+        mockServer.verify();
     }
 
     // XSD doğrulaması, zorunlu alanlar eksik
