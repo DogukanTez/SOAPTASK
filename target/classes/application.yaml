@@ -15,3 +15,7 @@ vies:
     max-attempts: 3
     delay: 1s
     multiplier: 3.0
+
+logging:
+  level:
+    com.dogukantez.soaptask: DEBUG
