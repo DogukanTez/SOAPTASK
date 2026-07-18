@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+            xmlns="urn:ec.europa.eu:taxud:vies:services:checkVat:types"
+            targetNamespace="urn:ec.europa.eu:taxud:vies:services:checkVat:types"
+            attributeFormDefault="qualified"
+            elementFormDefault="qualified">
+
+    <xsd:element name="checkVat">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element name="countryCode" type="xsd:string"/>
+                <xsd:element name="vatNumber" type="xsd:string"/>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+
+    <xsd:element name="checkVatResponse">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element name="countryCode" type="xsd:string"/>
+                <xsd:element name="vatNumber" type="xsd:string"/>
+                <xsd:element name="requestDate" type="xsd:date"/>
+                <xsd:element name="valid" type="xsd:boolean"/>
+                <xsd:element maxOccurs="1" minOccurs="0" name="name" nillable="true" type="xsd:string"/>
+                <xsd:element maxOccurs="1" minOccurs="0" name="address" nillable="true" type="xsd:string"/>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+
+</xsd:schema>
