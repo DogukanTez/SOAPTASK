@@ -10,3 +10,10 @@ cümleleri ile belirtilse de, xsd:string olarak tanımlandığı için pattern v
 
 - Daha önce wsdl, soap ve xsd dosyaları ile çalışmadığım için tasarım kısmında calude ve chatgpt den yardım aldım. Buna bağlı olarak xsd dosyası mevcutta olmadığından kendim oluşturmayı ve onun üzerinden gitmeyi tercih ettim.
 - resources altına xsd klasörünü oluşturdum
+
+- Exception classlarının amaçları şöyle: 
+- TemporaryException tekrar denenmek üzere,
+- TechnicalException tekrar denenmeyecek, loglanacak ve kullanıcıya hata mesajı dönecek,
+- InvalidInputException validation hatası için, kullanıcıya hata mesajı dönecek.
+
+- ViesFaultCode içinde contains kullanılmasının sebebi esneklik sağlanması.VIES bazen kodu düz döndürüyor, bazen uzun açıklama metninin içine gömebiliyormuş. Bu nedenle tercih ettim.
