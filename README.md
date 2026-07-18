@@ -26,3 +26,12 @@ cümleleri ile belirtilse de, xsd:string olarak tanımlandığı için pattern v
 - Mapper paketi açtım ancak mapstruct kütüphanesi kullanmadım. Ekstra dependency eklememek için basit şekilde oluşturdum.
 - Retryable anotasyonu proxy üzerinden çalıştığı için aynı transactional methodu gibi aynı service methodu içinde çağrıldığında retryable çalışmıyor.
 - Retry parametreleri application.yml da vies.retry altında tanımlı ancak @Retryable anotasyonuna doğrudan bağlanmadı. Anotasyon değerleri derleme zamanında sabit olmak zorunda. Configten okuma için RetryTemplate beani kurulabilirdi.
+- Name ve Address alanları dönen cevapta --- olarak geliyor.
+
+## Uygulamayı bitirdikten sonra postman üzerinden manuel testler yaptım: 
+
+- Geçerli numaralar → 200, ISSUABLE
+- Kayıtlı olmayan numara → 200, NOT_ISSUABLE (valid=false, iş sonucu)
+- Küçük harf ülke kodu ("de") → 400, bean validation, servise hiç gitmiyor
+- Tanımsız ülke kodu ("XX") → 400, VIES'ten INVALID_INPUT fault'u
+- Erişilemeyen endpoint → 3 deneme sonrası 503
