@@ -7,13 +7,20 @@ import com.dogukantez.soaptask.model.VatValidationResult;
 import jakarta.xml.bind.JAXBElement;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.oxm.jaxb.Jaxb2Marshaller;
 import org.springframework.stereotype.Component;
+import org.springframework.ws.WebServiceMessage;
 import org.springframework.ws.client.WebServiceClientException;
 import org.springframework.ws.client.WebServiceIOException;
 import org.springframework.ws.client.core.WebServiceTemplate;
+import org.springframework.ws.soap.SoapBody;
+import org.springframework.ws.soap.SoapFault;
+import org.springframework.ws.soap.SoapMessage;
 import org.springframework.ws.soap.client.SoapFaultClientException;
+import org.springframework.ws.support.MarshallingUtils;
 
 import javax.xml.datatype.XMLGregorianCalendar;
+import java.io.IOException;
 import java.time.LocalDate;
 
 @Slf4j
@@ -22,6 +29,7 @@ import java.time.LocalDate;
 public class ViesClient {
 
     private final WebServiceTemplate viesWebServiceTemplate;
+    private final Jaxb2Marshaller viesMarshaller;
 
     public VatValidationResult checkVat(String countryCode, String vatNumber) {
 
@@ -29,39 +37,57 @@ public class ViesClient {
         request.setCountryCode(countryCode);
         request.setVatNumber(vatNumber);
 
-        log.debug("VIES query sending: {}{}", countryCode, vatNumber);
+        log.debug("Sending VIES query: {} {}", countryCode, vatNumber);
 
         try {
-            CheckVatResponse response =
-                    (CheckVatResponse) viesWebServiceTemplate.marshalSendAndReceive(request);
-            return toResult(response);
+            return viesWebServiceTemplate.sendAndReceive(
+                    message -> MarshallingUtils.marshal(viesMarshaller, request, message),
+                    this::extractResult);
 
         } catch (SoapFaultClientException e) {
-            throw mapFault(e);
+            throw mapFault(ViesFaultCode.from(e.getFaultStringOrReason())); // framework faultu kendi yakalarsa buraya girer.
 
         } catch (WebServiceIOException e) {
-            // bağlantı kurulamadı veya cevap zamanında gelmediyse
             log.warn("VIES access error: {}", e.getMessage());
-            throw new ViesTemporaryException("VIES service couldn't reach", e);
+            throw new ViesTemporaryException("Could not reach VIES service", e);
 
         } catch (WebServiceClientException e) {
-            // XSD doğrulama hatası ve diğer client hataları
             log.error("VIES technical fault", e);
             throw new ViesTechnicalException("VIES call failed", e);
         }
     }
 
-    private ViesException mapFault(SoapFaultClientException e) {
-        ViesFaultCode code = ViesFaultCode.from(e.getFaultStringOrReason());
+    private VatValidationResult extractResult(WebServiceMessage message) throws IOException {
+
+        if (message instanceof SoapMessage soapMessage) {
+            SoapBody body = soapMessage.getSoapBody();
+            if (body.hasFault()) {
+                SoapFault fault = body.getFault();
+                throw mapFault(ViesFaultCode.from(fault.getFaultStringOrReason()));
+            }
+        }
+
+        Object payload = MarshallingUtils.unmarshal(viesMarshaller, message);
+
+        if (!(payload instanceof CheckVatResponse response)) {
+            log.error("Unexpected VIES response type: {}",
+                    payload == null ? "null" : payload.getClass().getName());
+            throw new ViesTechnicalException("Unexpected response type from VIES", null);
+        }
+
+        return toResult(response);
+    }
+
+    private ViesException mapFault(ViesFaultCode code) {
         log.warn("VIES SOAP fault: {}", code);
 
         if (code == ViesFaultCode.INVALID_INPUT) {
-            return new ViesInvalidInputException("VIES refused input: " + code, e);
+            return new ViesInvalidInputException("VIES refused input: " + code, null);
         }
         if (code.isTemporary()) {
-            return new ViesTemporaryException("VIES temporary unavaible: " + code, e);
+            return new ViesTemporaryException("VIES temporarily unavailable: " + code, null);
         }
-        return new ViesTechnicalException("Unexpected VIES fault: " + code, e);
+        return new ViesTechnicalException("Unexpected VIES fault: " + code, null);
     }
 
     private VatValidationResult toResult(CheckVatResponse response) {
@@ -82,6 +108,6 @@ public class ViesClient {
     private LocalDate toLocalDate(XMLGregorianCalendar calendar) {
         return calendar == null
                 ? null
-                : LocalDate.of(calendar.getYear(), calendar.getMonth(), calendar.getDay());
+                : calendar.toGregorianCalendar().toZonedDateTime().toLocalDate();
     }
 }
