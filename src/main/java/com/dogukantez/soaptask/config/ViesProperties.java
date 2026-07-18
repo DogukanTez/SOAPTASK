@@ -21,11 +21,20 @@ public class ViesProperties {
     private String wsdl;
 
     private Timeout timeout = new Timeout();
+    private Retry retry = new Retry();
 
     @Getter
     @Setter
     public static class Timeout {
         private Duration connect = Duration.ofSeconds(5);
         private Duration read = Duration.ofSeconds(15);
+    }
+
+    @Getter
+    @Setter
+    public static class Retry {
+        private int maxAttempts = 3;
+        private Duration delay = Duration.ofSeconds(1);
+        private double multiplier = 2.0;
     }
 }

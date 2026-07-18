@@ -11,3 +11,7 @@ vies:
   timeout:
     connect: 5s
     read: 15s
+  retry:
+    max-attempts: 3
+    delay: 1s
+    multiplier: 3.0

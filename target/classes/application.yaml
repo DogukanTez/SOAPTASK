@@ -5,9 +5,13 @@ server:
   port: 8080
 
 vies:
-  endpoint: https://ec.europa.eu/taxation_customs/vies/services/checkVatService
+  endpoint: https://ec.europa.eu/taxation_customs/vies/services/checkVatServiceX
   wsdl: https://ec.europa.eu/taxation_customs/vies/checkVatService.wsdl
 
   timeout:
     connect: 5s
     read: 15s
+  retry:
+    max-attempts: 3
+    delay: 1s
+    multiplier: 3.0

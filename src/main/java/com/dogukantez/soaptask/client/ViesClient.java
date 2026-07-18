@@ -8,6 +8,7 @@ import jakarta.xml.bind.JAXBElement;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.oxm.jaxb.Jaxb2Marshaller;
+import org.springframework.resilience.annotation.Retryable;
 import org.springframework.stereotype.Component;
 import org.springframework.ws.WebServiceMessage;
 import org.springframework.ws.client.WebServiceClientException;
@@ -31,6 +32,13 @@ public class ViesClient {
     private final WebServiceTemplate viesWebServiceTemplate;
     private final Jaxb2Marshaller viesMarshaller;
 
+    @Retryable(
+            includes = ViesTemporaryException.class,
+            //maxAttempts = 3,
+            maxRetries = 3,
+            delay = 1000,
+            multiplier = 3.0
+    )
     public VatValidationResult checkVat(String countryCode, String vatNumber) {
 
         CheckVat request = new CheckVat();

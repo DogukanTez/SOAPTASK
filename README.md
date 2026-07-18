@@ -23,4 +23,6 @@ cümleleri ile belirtilse de, xsd:string olarak tanımlandığı için pattern v
 - Akışta exception fırlatılmadan devam ediliyor ve NOT_ISSUABLE olarak işaretleniyor. Bu ayrım ViexClient içinde yapılıyor. InvoiceValidationService içinde yalnızca iş kuralları var.
 - Fatura kesilemezse de 200 döndürüyorum çünkü bu bir hata değil, iş akışıdır. Not_Issuable durumu olarak işaretleniyor.
 
--Mapper paketi açtım ancak mapstruct kütüphanesi kullanmadım. Ekstra dependency eklememek için basit şekilde oluşturdum.
+- Mapper paketi açtım ancak mapstruct kütüphanesi kullanmadım. Ekstra dependency eklememek için basit şekilde oluşturdum.
+- Retryable anotasyonu proxy üzerinden çalıştığı için aynı transactional methodu gibi aynı service methodu içinde çağrıldığında retryable çalışmıyor.
+- Retry parametreleri application.yml da vies.retry altında tanımlı ancak @Retryable anotasyonuna doğrudan bağlanmadı. Anotasyon değerleri derleme zamanında sabit olmak zorunda. Configten okuma için RetryTemplate beani kurulabilirdi.
