@@ -9,5 +9,5 @@ vies:
   wsdl: https://ec.europa.eu/taxation_customs/vies/checkVatService.wsdl
 
   timeout:
-    connect: 5000
-    read: 5000
+    connect: 5s
+    read: 15s
