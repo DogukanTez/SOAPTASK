@@ -1,12 +1,12 @@
 com/dogukantez/soaptask/config/ViesProperties$Timeout.class
 com/dogukantez/soaptask/model/Invoice.class
+com/dogukantez/soaptask/generated/CheckVatResponse.class
+com/dogukantez/soaptask/model/Invoice$InvoiceBuilder.class
+com/dogukantez/soaptask/generated/CheckVat.class
 com/dogukantez/soaptask/SoaptaskApplication.class
 com/dogukantez/soaptask/dto/InvoiceRequest.class
 com/dogukantez/soaptask/config/ViesProperties.class
 com/dogukantez/soaptask/model/VatValidationResult.class
 com/dogukantez/soaptask/generated/ObjectFactory.class
 com/dogukantez/soaptask/generated/package-info.class
-com/dogukantez/soaptask/generated/CheckVatResponse.class
-com/dogukantez/soaptask/model/Invoice$InvoiceBuilder.class
-com/dogukantez/soaptask/generated/CheckVat.class
 com/dogukantez/soaptask/model/VatValidationResult$VatValidationResultBuilder.class
