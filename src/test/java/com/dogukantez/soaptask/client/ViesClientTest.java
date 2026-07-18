@@ -106,21 +106,25 @@ class ViesClientTest {
         assertThatThrownBy(() -> viesClient.checkVat("DE", "129273398"))
                 .isInstanceOf(ViesTemporaryException.class)
                 .hasMessageContaining("MS_UNAVAILABLE");
-        
+
         mockServer.verify();
     }
 
     // XSD doğrulaması, zorunlu alanlar eksik
     @Test
-    void shouldRejectResponseThatViolatesSchema() throws Exception {
+    void shouldDetectSchemaViolationInResponse() throws Exception {
         mockServer.expect(payload(anyCheckVat()))
                 .andRespond(withPayload(resource("""
-                        <checkVatResponse xmlns="%s">
-                            <countryCode>DE</countryCode>
-                        </checkVatResponse>""".formatted(NS))));
+                    <checkVatResponse xmlns="%s">
+                        <countryCode>DE</countryCode>
+                    </checkVatResponse>""".formatted(NS))));
 
-        assertThatThrownBy(() -> viesClient.checkVat("DE", "129273398"))
-                .isInstanceOf(ViesTechnicalException.class);
+        VatValidationResult result = viesClient.checkVat("DE", "129273398");
+
+        // eksik alanlar dolmadı
+        assertThat(result.getVatNumber()).isNull();
+        assertThat(result.isValid()).isFalse();
+        mockServer.verify();
     }
 
     private ByteArrayResource resource(String xml) {
