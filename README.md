@@ -17,3 +17,7 @@ cümleleri ile belirtilse de, xsd:string olarak tanımlandığı için pattern v
 - InvalidInputException validation hatası için, kullanıcıya hata mesajı dönecek.
 
 - ViesFaultCode içinde contains kullanılmasının sebebi esneklik sağlanması.VIES bazen kodu düz döndürüyor, bazen uzun açıklama metninin içine gömebiliyormuş. Bu nedenle tercih ettim.
+
+- Her iki KDV numarası da (alıcı,satıcı) her durumda sorgulanıyor. Satıcı numarası geçersiz çıksa bile alıcı sorgusu atlanmıyor. Kullanıcı tek istekte her iki tarafın durumunu da görüyor, hatalı fatura için iki kez denemek zorunda kalmaması için.
+- Valid false olsa bile bu bir hata değildir, iş sonucudur. Exception verilemden devam ediliyor. 
+- Akışta exception fırlatılmadan devam ediliyor ve NOT_ISSUABLE olarak işaretleniyor. Bu ayrım ViexClient içinde yapılıyor. InvoiceValidationService içinde yalnızca iş kuralları var.
