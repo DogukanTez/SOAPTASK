@@ -21,5 +21,6 @@ cümleleri ile belirtilse de, xsd:string olarak tanımlandığı için pattern v
 - Her iki KDV numarası da (alıcı,satıcı) her durumda sorgulanıyor. Satıcı numarası geçersiz çıksa bile alıcı sorgusu atlanmıyor. Kullanıcı tek istekte her iki tarafın durumunu da görüyor, hatalı fatura için iki kez denemek zorunda kalmaması için.
 - Valid false olsa bile bu bir hata değildir, iş sonucudur. Exception verilemden devam ediliyor. 
 - Akışta exception fırlatılmadan devam ediliyor ve NOT_ISSUABLE olarak işaretleniyor. Bu ayrım ViexClient içinde yapılıyor. InvoiceValidationService içinde yalnızca iş kuralları var.
+- Fatura kesilemezse de 200 döndürüyorum çünkü bu bir hata değil, iş akışıdır. Not_Issuable durumu olarak işaretleniyor.
 
 -Mapper paketi açtım ancak mapstruct kütüphanesi kullanmadım. Ekstra dependency eklememek için basit şekilde oluşturdum.
